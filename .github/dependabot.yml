@@ -1,0 +1,25 @@
+version: 2
+updates:
+  # Python dependencies (pyproject.toml). unofficial-polestar-api is
+  # reverse-engineered and pinned <0.4; dependabot will still open a PR
+  # when new versions (including 0.4+) appear so we notice upstream changes.
+  - package-ecosystem: pip
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    groups:
+      python-deps:
+        patterns: ["*"]
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+
+  - package-ecosystem: docker
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday

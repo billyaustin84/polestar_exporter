@@ -40,7 +40,6 @@ from polestar_api.models.exterior import (
 )
 from polestar_api.models.health import (
     BrakeFluidLevelWarning,
-    ExteriorLightWarning,
     Health,
     ServiceWarning,
     TyrePressureWarning,
