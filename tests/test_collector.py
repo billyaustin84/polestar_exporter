@@ -250,6 +250,17 @@ class TestPollHealth:
             value(registry, "polestar_last_successful_poll_timestamp_seconds") is None
         )
 
+    async def test_error_counters_exist_at_zero(self, metrics, registry, config):
+        """Series must exist before any error so 'no data' can't be mistaken for 'no errors'."""
+        await collect(metrics, config, **full_responses())
+        for endpoint in ("battery", "health", "location", "weather"):
+            assert (
+                registry.get_sample_value(
+                    "polestar_poll_errors_total", {"vin": VIN, "endpoint": endpoint}
+                )
+                == 0.0
+            )
+
     async def test_none_responses_are_not_errors(self, metrics, registry, config):
         """Polestar 4 style: several endpoints legitimately return None."""
         success = await collect(

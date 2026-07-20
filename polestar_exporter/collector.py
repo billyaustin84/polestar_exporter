@@ -94,6 +94,12 @@ class VehicleCollector:
         if self.config.export_weather:
             steps.append(("weather", self._collect_weather))
 
+        # Touch every counter child up front so the series exist at 0 —
+        # otherwise increase() queries and dashboards see "no data" instead
+        # of "no errors" until the first failure.
+        for endpoint, _ in steps:
+            self.metrics.poll_errors.labels(vin=vin, endpoint=endpoint)
+
         errors = 0
         for endpoint, step in steps:
             try:
