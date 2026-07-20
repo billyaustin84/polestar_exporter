@@ -1,5 +1,8 @@
 # polestar-exporter
 
+[![CI](https://github.com/billyaustin84/polestar_exporter/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/billyaustin84/polestar_exporter/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
 A [Prometheus](https://prometheus.io/) exporter for Polestar vehicles, built on
 [`unofficial-polestar-api`](https://pypi.org/project/unofficial-polestar-api/).
 It signs in with your Polestar account, discovers your vehicles, and polls the
