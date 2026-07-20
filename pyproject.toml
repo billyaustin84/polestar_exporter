@@ -1,0 +1,33 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "polestar-exporter"
+version = "0.1.0"
+description = "Prometheus exporter for Polestar vehicles, built on the unofficial-polestar-api library"
+readme = "README.md"
+requires-python = ">=3.12"
+license = { text = "MIT" }
+dependencies = [
+    # The upstream library is reverse-engineered and moves fast; pin the minor
+    # version so a breaking upstream release can't take the exporter down.
+    "unofficial-polestar-api>=0.3.0,<0.4",
+    "prometheus-client>=0.20",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "pytest-asyncio>=0.24",
+]
+
+[project.scripts]
+polestar-exporter = "polestar_exporter.main:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["polestar_exporter"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
