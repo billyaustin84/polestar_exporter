@@ -49,6 +49,31 @@
         "multi": false,
         "includeAll": false,
         "current": {}
+      },
+      {
+        "name": "distance",
+        "label": "Distance unit",
+        "type": "custom",
+        "query": "km : 1000, mi : 1609.344",
+        "options": [
+          {
+            "text": "km",
+            "value": "1000",
+            "selected": true
+          },
+          {
+            "text": "mi",
+            "value": "1609.344",
+            "selected": false
+          }
+        ],
+        "current": {
+          "text": "km",
+          "value": "1000",
+          "selected": true
+        },
+        "includeAll": false,
+        "multi": false
       }
     ]
   },
@@ -130,7 +155,7 @@
       "targets": [
         {
           "refId": "A",
-          "expr": "polestar_battery_range_meters{vin=~\"$vin\"}",
+          "expr": "polestar_battery_range_meters{vin=~\"$vin\"} / $distance",
           "instant": true,
           "editorMode": "code",
           "range": false
@@ -138,7 +163,7 @@
       ],
       "fieldConfig": {
         "defaults": {
-          "unit": "lengthm",
+          "unit": "suffix: ${distance:text}",
           "decimals": 0,
           "thresholds": {
             "mode": "absolute",
@@ -182,7 +207,7 @@
       "targets": [
         {
           "refId": "A",
-          "expr": "polestar_odometer_meters{vin=~\"$vin\"}",
+          "expr": "polestar_odometer_meters{vin=~\"$vin\"} / $distance",
           "instant": true,
           "editorMode": "code",
           "range": false
@@ -190,7 +215,7 @@
       ],
       "fieldConfig": {
         "defaults": {
-          "unit": "lengthm",
+          "unit": "suffix: ${distance:text}",
           "decimals": 0,
           "thresholds": {
             "mode": "absolute",
@@ -688,7 +713,7 @@
       "targets": [
         {
           "refId": "A",
-          "expr": "polestar_battery_range_meters{vin=~\"$vin\"}",
+          "expr": "polestar_battery_range_meters{vin=~\"$vin\"} / $distance",
           "legendFormat": "Range",
           "editorMode": "code",
           "range": true,
@@ -697,7 +722,7 @@
       ],
       "fieldConfig": {
         "defaults": {
-          "unit": "lengthm",
+          "unit": "suffix: ${distance:text}",
           "color": {
             "mode": "fixed",
             "fixedColor": "#3987e5"
@@ -708,7 +733,8 @@
             "fillOpacity": 8,
             "showPoints": "never",
             "spanNulls": true
-          }
+          },
+          "decimals": 0
         },
         "overrides": []
       },
@@ -1135,7 +1161,7 @@
       "targets": [
         {
           "refId": "A",
-          "expr": "polestar_distance_to_service_meters{vin=~\"$vin\"} / 1000",
+          "expr": "polestar_distance_to_service_meters{vin=~\"$vin\"} / $distance",
           "instant": true,
           "editorMode": "code",
           "range": false
@@ -1143,7 +1169,7 @@
       ],
       "fieldConfig": {
         "defaults": {
-          "unit": "lengthkm",
+          "unit": "suffix: ${distance:text}",
           "decimals": 0,
           "thresholds": {
             "mode": "absolute",
