@@ -90,6 +90,30 @@ docker run -d --name polestar-exporter \
   polestar-exporter
 ```
 
+### systemd
+
+Example unit and environment files live in [`contrib/`](contrib/):
+
+```bash
+sudo python3 -m venv /opt/polestar-exporter
+sudo /opt/polestar-exporter/bin/pip install git+https://github.com/billyaustin84/polestar_exporter
+
+sudo install -d -m 750 /etc/polestar-exporter
+sudo install -m 600 contrib/polestar-exporter.env.example /etc/polestar-exporter/polestar-exporter.env
+sudoedit /etc/polestar-exporter/polestar-exporter.env   # add your credentials/VINs
+
+sudo cp contrib/polestar-exporter.service /etc/systemd/system/
+sudo systemctl daemon-reload
+sudo systemctl enable --now polestar-exporter
+```
+
+The unit runs as an unprivileged `DynamicUser` with the credentials file
+readable by root only, persists the OAuth token cache in
+`/var/lib/polestar-exporter/`, and applies standard systemd sandboxing. The
+env file holds everything — email, password, VINs, and any optional settings —
+and its comments cover the `LoadCredential=` variant if you prefer the
+password out of the env file entirely.
+
 ### Prometheus scrape config
 
 The exporter polls the Polestar cloud on its own schedule and serves the most

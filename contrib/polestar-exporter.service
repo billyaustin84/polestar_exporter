@@ -1,0 +1,67 @@
+# systemd unit for polestar-exporter
+#
+# Install:
+#   sudo cp polestar-exporter.service /etc/systemd/system/
+#   sudo systemctl daemon-reload
+#   sudo systemctl enable --now polestar-exporter
+#
+# Assumes the exporter is installed in a venv at /opt/polestar-exporter:
+#   sudo python3 -m venv /opt/polestar-exporter
+#   sudo /opt/polestar-exporter/bin/pip install git+https://github.com/billyaustin84/polestar_exporter
+# Adjust ExecStart if you installed it elsewhere (e.g. pipx).
+
+[Unit]
+Description=Prometheus exporter for Polestar vehicles
+Documentation=https://github.com/billyaustin84/polestar_exporter
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=exec
+EnvironmentFile=/etc/polestar-exporter/polestar-exporter.env
+ExecStart=/opt/polestar-exporter/bin/polestar-exporter
+
+# Persist OAuth tokens across restarts (avoids a full login every start).
+# %S/polestar-exporter = /var/lib/polestar-exporter, created automatically.
+StateDirectory=polestar-exporter
+Environment=TOKEN_CACHE_PATH=%S/polestar-exporter/tokens.json
+
+# The Polestar cloud API disappears from time to time; keep trying, but
+# don't hammer it (the exporter also backs off internally).
+Restart=on-failure
+RestartSec=60
+
+# Run as a throwaway unprivileged user; the env file stays root-only.
+DynamicUser=yes
+
+# Hardening
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+PrivateDevices=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectKernelLogs=yes
+ProtectControlGroups=yes
+ProtectClock=yes
+ProtectHostname=yes
+ProtectProc=invisible
+RestrictSUIDSGID=yes
+RestrictNamespaces=yes
+RestrictRealtime=yes
+LockPersonality=yes
+CapabilityBoundingSet=
+RestrictAddressFamilies=AF_INET AF_INET6
+SystemCallFilter=@system-service
+SystemCallErrorNumber=EPERM
+
+# Alternative to keeping the password in the env file: store it alone in
+# /etc/polestar-exporter/password (mode 600), then uncomment these two and
+# remove POLESTAR_PASSWORD from the env file. systemd exposes the secret
+# only to this service, at a private path.
+#LoadCredential=polestar-password:/etc/polestar-exporter/password
+#Environment=POLESTAR_PASSWORD_FILE=%d/polestar-password
+
+[Install]
+WantedBy=multi-user.target
